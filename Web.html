@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XI PPLG — Ultimate Scrapbook & Interactive Journal</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Reenie+Beanie&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. DESIGN SYSTEM & VARIABLES
+           ========================================================================== */
+        :root {
+            --color-butter-cream: #F7F2E3;
+            --color-sage-green: #9BA58A;
+            --color-sage-dark: #6E795E;
+            --color-muted-yellow: #D9B96E;
+            --color-dark-olive: #3A4233;
+            --color-warm-white: #FFFDF7;
+            --color-soft-beige: #EAE3D2;
+            --color-muted-brown: #766653;
+            --color-charcoal: #2D312B;
+            --color-accent-red: #C86D51;
+
+            --font-editorial: 'Playfair Display', Georgia, serif;
+            --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+            --font-handwriting: 'Reenie Beanie', cursive;
+
+            /* Scrapbook Shadows */
+            --shadow-subtle: 0 4px 15px rgba(58, 66, 51, 0.05);
+            --shadow-card: 0 10px 30px rgba(45, 49, 43, 0.08), 0 2px 6px rgba(45, 49, 43, 0.04);
+            --shadow-scrapbook: 6px 14px 35px rgba(45, 49, 43, 0.14), -2px -2px 10px rgba(255, 255, 255, 0.5);
+            --shadow-floating: 0 20px 45px rgba(45, 49, 43, 0.22);
+
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+
+            --transition-smooth: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* RESET & BASE */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-butter-cream);
+            color: var(--color-dark-olive);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(rgba(110, 121, 94, 0.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+        .container {
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ==========================================================================
+           2. NAVIGATION BAR
+           ========================================================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(247, 242, 227, 0.94);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(155, 165, 138, 0.25);
+            transition: var(--transition-smooth);
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 76px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-editorial);
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--color-dark-olive);
+            cursor: pointer;
+        }
+
+        .brand-badge {
+            background: var(--color-sage-green);
+            color: var(--color-warm-white);
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--color-muted-brown);
+            position: relative;
+            padding: 4px 0;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--color-dark-olive);
+            font-weight: 700;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--color-muted-yellow);
+            border-radius: 2px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background-color: var(--color-dark-olive);
+            transition: var(--transition-smooth);
+            border-radius: 2px;
+        }
+
+        /* ==========================================================================
+           3. PAGES & LAYOUT SYSTEM
+           ========================================================================== */
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            padding-top: 76px;
+            min-height: 100vh;
+            padding-bottom: 5rem;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ZIG ZAG SECTION HEADERS */
+        .section-header {
+            max-width: 700px;
+            margin: 3.5rem auto 3rem;
+            position: relative;
+            text-align: left;
+        }
+
+        .section-header.align-left {
+            margin-left: 0;
+            text-align: left;
+        }
+
+        .section-header.align-right {
+            margin-right: 0;
+            text-align: right;
+        }
+
+        .section-header.align-center {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-sage-dark);
+            background: rgba(155, 165, 138, 0.18);
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(155, 165, 138, 0.3);
+        }
+
+        .section-title {
+            font-family: var(--font-editorial);
+            font-size: 2.8rem;
+            color: var(--color-dark-olive);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--color-muted-brown);
+            font-size: 1.05rem;
+        }
+
+        /* SCRAPBOOK DECORATIONS */
+        .shadow-box {
+            background: var(--color-warm-white);
+            border-radius: var(--radius-md);
+            padding: 2.2rem;
+            box-shadow: var(--shadow-scrapbook);
+            border: 1px solid rgba(155, 165, 138, 0.2);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .shadow-box:hover {
+            box-shadow: var(--shadow-floating);
+            transform: translateY(-4px);
+        }
+
+        .tape-effect {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1.5deg);
+            width: 110px;
+            height: 26px;
+            background: rgba(217, 185, 110, 0.45);
+            border-left: 3px dashed rgba(255,255,255,0.6);
+            border-right: 3px dashed rgba(255,255,255,0.6);
+            backdrop-filter: blur(3px);
+            z-index: 5;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .pin-effect {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 18px;
+            height: 18px;
+            background: var(--color-accent-red);
+            border-radius: 50%;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 2px 4px 8px rgba(0,0,0,0.25);
+            z-index: 6;
+        }
+
+        .stamp-badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 65px;
+            height: 65px;
+            border: 2px dashed var(--color-sage-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-editorial);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--color-sage-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: rotate(12deg);
+            background: var(--color-warm-white);
+            box-shadow: var(--shadow-subtle);
+            z-index: 4;
+        }
+
+        /* ==========================================================================
+           4. PAGE 1: HOME
+           ========================================================================== */
+        .hero-section {
+            position: relative;
+            min-height: calc(100vh - 76px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 4rem 3rem;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: var(--color-warm-white);
+            border-bottom: 4px solid var(--color-sage-green);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                110deg, 
+                rgba(45, 49, 43, 0.88) 0%, 
+                rgba(58, 66, 51, 0.75) 50%, 
+                rgba(45, 49, 43, 0.45) 100%
+            );
+            backdrop-filter: blur(2px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: left;
+            max-width: 780px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(247, 242, 227, 0.2);
+            border: 1px solid rgba(247, 242, 227, 0.4);
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-title {
+            font-family: var(--font-editorial);
+            font-size: 4.4rem;
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .hero-title span {
+            font-style: italic;
+            color: var(--color-muted-yellow);
+            font-weight: 400;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            max-width: 650px;
+            margin-bottom: 2.5rem;
+            opacity: 0.92;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 34px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-card);
+        }
+
+        .btn-primary {
+            background: var(--color-muted-yellow);
+            color: var(--color-charcoal);
+        }
+
+        .btn-primary:hover {
+            background: #e4c57b;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-floating);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--color-warm-white);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(6px);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+
+        /* Stats Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin: -3.5rem auto 4.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            background: var(--color-warm-white);
+            padding: 2.2rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-scrapbook);
+            border: 1px solid rgba(155, 165, 138, 0.25);
+            position: relative;
+        }
+
+        .stat-number {
+            font-family: var(--font-editorial);
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: var(--color-sage-dark);
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-label {
+            font-size: 0.88rem;
+            color: var(--color-muted-brown);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Polaroid Memory Snippets */
+        .scrapbook-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.2rem;
+            margin-bottom: 5rem;
+        }
+
+        .polaroid-card {
+            background: #FFF;
+            padding: 16px 16px 26px 16px;
+            box-shadow: var(--shadow-scrapbook);
+            border-radius: 4px;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .polaroid-card:nth-child(1) { transform: rotate(-2.5deg); }
+        .polaroid-card:nth-child(2) { transform: rotate(2deg); }
+        .polaroid-card:nth-child(3) { transform: rotate(-1.8deg); }
+
+        .polaroid-card:hover {
+            transform: scale(1.04) rotate(0deg) !important;
+            box-shadow: var(--shadow-floating);
+            z-index: 10;
+        }
+
+        .polaroid-img-wrapper {
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            background: var(--color-soft-beige);
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .polaroid-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .polaroid-card:hover .polaroid-img-wrapper img {
+            transform: scale(1.08);
+        }
+
+        .polaroid-caption {
+            font-family: var(--font-editorial);
+            font-size: 1.2rem;
+            color: var(--color-dark-olive);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .polaroid-date {
+            font-size: 0.8rem;
+            color: var(--color-muted-brown);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .handwritten-note {
+            font-family: var(--font-handwriting);
+            font-size: 1.8rem;
+            color: var(--color-sage-dark);
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        /* Interactive Quote Generator Box */
+        .quote-box {
+            background: var(--color-sage-green);
+            color: var(--color-warm-white);
+            padding: 4.5rem 2.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-scrapbook);
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-text {
+            font-family: var(--font-editorial);
+            font-size: 2.2rem;
+            font-style: italic;
+            line-height: 1.4;
+            max-width: 820px;
+            margin: 0 auto 1.5rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .quote-author {
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ==========================================================================
+           5. PAGE 2: ABOUT US
+           ========================================================================== */
+        .about-story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        .drop-cap::first-letter {
+            font-family: var(--font-editorial);
+            font-size: 4rem;
+            float: left;
+            line-height: 0.8;
+            padding-right: 12px;
+            color: var(--color-sage-dark);
+            font-weight: 700;
+        }
+
+        .homeroom-card {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: var(--color-soft-beige);
+            padding: 2.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-scrapbook);
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .homeroom-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--color-warm-white);
+            box-shadow: var(--shadow-scrapbook);
+            flex-shrink: 0;
+        }
+
+        .org-chart-container {
+            margin-bottom: 4rem;
+        }
+
+        .org-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .org-level {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .org-card {
+            background: var(--color-warm-white);
+            padding: 1.25rem 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(155, 165, 138, 0.3);
+            text-align: center;
+            min-width: 220px;
+            position: relative;
+        }
+
+        .org-card.wali {
+            border: 2px solid var(--color-sage-dark);
+            background: #F4F7EF;
+        }
+
+        .org-card.leader {
+            border: 2px solid var(--color-muted-yellow);
+        }
+
+        .org-role {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-sage-dark);
+            margin-bottom: 4px;
+        }
+
+        .org-name {
+            font-family: var(--font-editorial);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-dark-olive);
+        }
+
+        /* ==========================================================================
+           6. PAGE 3: ANGGOTA KELAS & FITUR BARU (QUIZ & GAME)
+           ========================================================================== */
+        .filter-search-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 12px 22px;
+            border-radius: 30px;
+            border: 1px solid rgba(155, 165, 138, 0.4);
+            background: var(--color-warm-white);
+            font-family: inherit;
+            font-size: 0.95rem;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: var(--shadow-subtle);
+            outline: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--color-soft-beige);
+            color: var(--color-muted-brown);
+            transition: var(--transition-smooth);
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--color-sage-green);
+            color: var(--color-warm-white);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2.2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* 3D FLIP CARD */
+        .flip-card {
+            background-color: transparent;
+            height: 380px;
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--radius-md);
+            padding: 1.75rem 1.5rem;
+            box-shadow: var(--shadow-scrapbook);
+            border: 1px solid rgba(155, 165, 138, 0.25);
+            background: var(--color-warm-white);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: var(--color-soft-beige);
+        }
+
+        .member-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--color-sage-green);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .member-avatar.wali-avatar {
+            border-color: var(--color-muted-yellow);
+        }
+
+        .member-name {
+            font-family: var(--font-editorial);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-dark-olive);
+            margin-bottom: 2px;
+        }
+
+        .member-role {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-sage-dark);
+            background: rgba(155, 165, 138, 0.18);
+            padding: 3px 12px;
+            border-radius: 12px;
+        }
+
+        .stat-bar-container {
+            width: 100%;
+            text-align: left;
+            margin: 6px 0;
+        }
+
+        .stat-bar-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-muted-brown);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+
+        .stat-bar-bg {
+            height: 6px;
+            background: rgba(155, 165, 138, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: var(--color-sage-dark);
+            border-radius: 4px;
+        }
+
+        /* FITUR 1: QUIZ SYSTEM STYLES */
+        .quiz-box {
+            background: var(--color-warm-white);
+            border-radius: var(--radius-lg);
+            padding: 3rem 2rem;
+            box-shadow: var(--shadow-scrapbook);
+            border: 2px dashed var(--color-sage-green);
+            max-width: 750px;
+            margin: 0 auto 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .quiz-option-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: var(--color-soft-beige);
+            color: var(--color-dark-olive);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            text-align: left;
+            border: 1px solid rgba(155, 165, 138, 0.3);
+        }
+
+        .quiz-option-btn:hover {
+            background: var(--color-sage-green);
+            color: var(--color-warm-white);
+            transform: translateX(5px);
+        }
+
+        /* FITUR 1: MEMORY GAME STYLES */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 520px;
+            margin: 2rem auto;
+        }
+
+        .game-card {
+            aspect-ratio: 1;
+            background: var(--color-sage-green);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+            box-shadow: var(--shadow-card);
+        }
+
+        .game-card.flipped {
+            background: var(--color-warm-white);
+            transform: rotateY(180deg);
+            border: 2px solid var(--color-sage-dark);
+        }
+
+        /* FITUR 2: SPOTIFY PLAYER CONTAINER */
+        .spotify-container {
+            background: var(--color-charcoal);
+            color: var(--color-warm-white);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-floating);
+            margin-bottom: 4rem;
+        }
+
+        /* ==========================================================================
+           7. PAGE 4: GALERI
+           ========================================================================== */
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .gallery-grid {
+            column-count: 3;
+            column-gap: 1.8rem;
+            margin-bottom: 4rem;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1.8rem;
+            background: #FFF;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-scrapbook);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: var(--shadow-floating);
+            z-index: 5;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .gallery-item-caption {
+            font-family: var(--font-editorial);
+            font-size: 1.05rem;
+            margin-top: 10px;
+            color: var(--color-dark-olive);
+            font-weight: 600;
+        }
+
+        .gallery-item-tag {
+            font-size: 0.75rem;
+            color: var(--color-muted-brown);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2500;
+            background: rgba(30, 34, 28, 0.94);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lightbox.active { display: flex; }
+
+        .lightbox-content {
+            max-width: 920px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .lightbox-img {
+            max-height: 75vh;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: var(--shadow-floating);
+            margin: 0 auto 1rem;
+        }
+
+        .lightbox-caption {
+            color: var(--color-warm-white);
+            font-family: var(--font-editorial);
+            font-size: 1.5rem;
+        }
+
+        .lightbox-close, .lightbox-prev, .lightbox-next {
+            position: absolute;
+            color: var(--color-warm-white);
+            font-size: 2.2rem;
+            cursor: pointer;
+            user-select: none;
+            padding: 10px;
+        }
+
+        .lightbox-close { top: -55px; right: 0; }
+        .lightbox-prev { left: -65px; top: 50%; transform: translateY(-50%); }
+        .lightbox-next { right: -65px; top: 50%; transform: translateY(-50%); }
+
+        /* ==========================================================================
+           8. PAGE 5: KEGIATAN
+           ========================================================================== */
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--color-sage-green);
+            transform: translateX(-50%);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 45px;
+            position: relative;
+            margin-bottom: 3.5rem;
+            width: 50%;
+        }
+
+        .timeline-item:nth-child(even) {
+            align-self: flex-end;
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 45px;
+            margin-left: 50%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            right: -9px;
+            top: 24px;
+            width: 18px;
+            height: 18px;
+            background: var(--color-muted-yellow);
+            border: 4px solid var(--color-warm-white);
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px var(--color-sage-green);
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            right: auto;
+            left: -9px;
+        }
+
+        .timeline-card {
+            background: var(--color-warm-white);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-scrapbook);
+            border: 1px solid rgba(155, 165, 138, 0.2);
+            width: 100%;
+            position: relative;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--color-sage-dark);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .timeline-title {
+            font-family: var(--font-editorial);
+            font-size: 1.5rem;
+            color: var(--color-dark-olive);
+            margin-bottom: 10px;
+        }
+
+        /* ==========================================================================
+           9. PAGE 6: INFORMASI BOARD & GUESTBOOK
+           ========================================================================== */
+        .notice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .notice-card {
+            background: var(--color-warm-white);
+            padding: 2.2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-scrapbook);
+            border-left: 6px solid var(--color-sage-green);
+            position: relative;
+        }
+
+        .notice-card.urgent {
+            border-left-color: var(--color-accent-red);
+        }
+
+        .notice-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            background: rgba(155, 165, 138, 0.15);
+            color: var(--color-dark-olive);
+        }
+
+        .notice-title {
+            font-family: var(--font-editorial);
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: var(--color-dark-olive);
+        }
+
+        .notice-timer {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-accent-red);
+            margin-top: 12px;
+        }
+
+        .guestbook-section {
+            margin-top: 5rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .sticky-note {
+            background: #FFF9C4;
+            padding: 1.75rem;
+            border-radius: 4px;
+            box-shadow: var(--shadow-scrapbook);
+            transform: rotate(-1.5deg);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .sticky-note:nth-child(even) { background: #E8F5E9; transform: rotate(2deg); }
+        .sticky-note:nth-child(3n) { background: #FFF0F5; transform: rotate(-2.5deg); }
+
+        .sticky-note:hover {
+            transform: scale(1.05) rotate(0deg);
+            box-shadow: var(--shadow-floating);
+            z-index: 10;
+        }
+
+        .sticky-note-author {
+            font-family: var(--font-editorial);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            color: var(--color-dark-olive);
+        }
+
+        .sticky-note-text {
+            font-family: var(--font-handwriting);
+            font-size: 1.6rem;
+            line-height: 1.2;
+            color: var(--color-charcoal);
+        }
+
+        .note-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 550px;
+            margin: 0 auto 3rem;
+            background: var(--color-warm-white);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-scrapbook);
+        }
+
+        .note-input, .note-textarea {
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(155, 165, 138, 0.4);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .note-textarea { resize: vertical; min-height: 90px; }
+
+        /* ==========================================================================
+           10. MUSIC PLAYER & CONTACT
+           ========================================================================== */
+        .music-player {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 1500;
+            background: var(--color-warm-white);
+            padding: 10px 18px;
+            border-radius: 40px;
+            box-shadow: var(--shadow-floating);
+            border: 1px solid rgba(155, 165, 138, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .music-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--color-sage-green);
+            color: var(--color-warm-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .contact-box {
+            max-width: 680px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            background: var(--color-sage-green);
+            color: var(--color-warm-white);
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: var(--shadow-card);
+        }
+
+        .footer {
+            background: var(--color-dark-olive);
+            color: var(--color-soft-beige);
+            padding: 3.5rem 0;
+            text-align: center;
+            border-top: 4px solid var(--color-sage-green);
+        }
+
+        @media (max-width: 900px) {
+            .gallery-grid { column-count: 2; }
+            .about-story-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) {
+                width: 100%;
+                padding-left: 55px;
+                padding-right: 0;
+                margin-left: 0;
+            }
+            .timeline-dot, .timeline-item:nth-child(even) .timeline-dot { left: 11px; }
+            .game-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section { padding: 4rem 1.5rem; }
+            .hero-title { font-size: 2.8rem; }
+            .nav-links {
+                position: fixed;
+                top: 76px;
+                left: 0;
+                right: 0;
+                background: var(--color-butter-cream);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                border-bottom: 2px solid var(--color-sage-green);
+                box-shadow: var(--shadow-floating);
+                display: none;
+            }
+            .nav-links.mobile-open { display: flex; }
+            .hamburger { display: flex; }
+            .gallery-grid { column-count: 1; }
+            .section-header.align-left, .section-header.align-right { text-align: center; margin-left: auto; margin-right: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="brand-logo" onclick="switchPage('home')">
+                <span>XI PPLG</span>
+                <span class="brand-badge">Journal</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><span class="nav-link active" onclick="switchPage('home')">Home</span></li>
+                <li><span class="nav-link" onclick="switchPage('about')">About</span></li>
+                <li><span class="nav-link" onclick="switchPage('members')">Anggota</span></li>
+                <li><span class="nav-link" onclick="switchPage('fun')">Fun Zone 🎮</span></li>
+                <li><span class="nav-link" onclick="switchPage('gallery')">Galeri</span></li>
+                <li><span class="nav-link" onclick="switchPage('activities')">Kegiatan</span></li>
+                <li><span class="nav-link" onclick="switchPage('info')">Informasi</span></li>
+                <li><span class="nav-link" onclick="switchPage('contact')">Contact</span></li>
+            </ul>
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- FLOATING MUSIC PLAYER -->
+    <div class="music-player">
+        <button class="music-btn" id="musicToggleBtn" onclick="toggleAudio()">▶</button>
+        <div class="music-info">
+            <div>Lagu Kenangan XI PPLG</div>
+            <div style="font-size: 0.7rem; opacity: 0.7;">Class Playlist</div>
+        </div>
+        <audio id="bgAudio" loop>
+            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- MAIN PAGES CONTAINER -->
+    <main>
+
+        <!-- PAGE 1: HOME -->
+        <section id="home" class="page active">
+            <div class="hero-section" id="heroSection">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge" id="heroYearBadge">Tahun Ajaran 2025/2026</div>
+                    <h1 class="hero-title" id="heroTitle">A Little Place, <br><span>A Lot of Memories.</span></h1>
+                    <p class="hero-description" id="heroDesc">
+                        Ruang digital kenangan kelas XI PPLG. Tempat kami menyimpan setiap tawa, cerita coding, dan momen tak terpisahkan bersama selama di sekolah.
+                    </p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="switchPage('gallery')">Jelajahi Kenangan</button>
+                        <button class="btn btn-outline" onclick="switchPage('members')">Lihat Anggota</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="tape-effect"></div>
+                        <div class="stat-number" id="statMembers">19</div>
+                        <div class="stat-label">Siswa & Siswi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="pin-effect"></div>
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">Kegiatan & Event</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="tape-effect"></div>
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Kebersamaan</div>
+                    </div>
+                </div>
+
+                <!-- ZIG ZAG HEADER: LEFT ALIGNED -->
+                <div class="section-header align-left">
+                    <span class="section-tag">Scrapbook Snippets</span>
+                    <h2 class="section-title">Sorotan Kenangan</h2>
+                    <p class="section-subtitle">Potret momen sederhana yang penuh arti di sudut kelas kami.</p>
+                </div>
+
+                <div class="scrapbook-preview-grid" id="homeMemoriesGrid"></div>
+
+                <!-- INTERACTIVE RANDOM QUOTE GENERATOR BOX -->
+                <div class="quote-box">
+                    <div class="stamp-badge">MEMORIES</div>
+                    <p class="quote-text" id="classQuote">"Bukan tentang berapa banyak baris kode yang error, tapi tentang siapa yang bertahan memperbaikinya bersama-sama."</p>
+                    <p class="quote-author" id="quoteAuthor">— XI PPLG 2025</p>
+                    <button class="btn btn-outline" onclick="generateRandomQuote()" style="font-size: 0.85rem; padding: 10px 24px;">Acak Kutipan / Inside Joke 🎲</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: ABOUT US -->
+        <section id="about" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: RIGHT ALIGNED -->
+                <div class="section-header align-right">
+                    <span class="section-tag">Identitas & Cerita</span>
+                    <h2 class="section-title">Tentang Kelas Kami</h2>
+                    <p class="section-subtitle">Mengenal lebih dekat siapa kami dan apa yang kami perjuangkan.</p>
+                </div>
+
+                <div class="about-story-grid">
+                    <div class="shadow-box">
+                        <div class="pin-effect"></div>
+                        <div class="stamp-badge">EST. 2024</div>
+                        <h3 style="font-family: var(--font-editorial); font-size: 1.8rem; margin-bottom: 1rem;">Kisah Pembentukan</h3>
+                        <p class="drop-cap" id="aboutStory"></p>
+                    </div>
+                    <div class="polaroid-card">
+                        <div class="tape-effect"></div>
+                        <div class="polaroid-img-wrapper">
+                            <img src="" alt="Kebersamaan Kelas" id="aboutPhoto">
+                        </div>
+                        <div class="polaroid-caption">Hari Pertama Masuk Kelas</div>
+                        <div class="handwritten-note">Awal mula perjalanan...</div>
+                    </div>
+                </div>
+
+                <!-- WALI KELAS CARD (DITAMBAHKAN LENGKAP) -->
+                <div class="homeroom-card">
+                    <div class="tape-effect"></div>
+                    <img src="" alt="Wali Kelas" class="homeroom-img" id="homeroomImg">
+                    <div>
+                        <span style="font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--color-sage-dark); font-weight: 700;">Wali Kelas Kami</span>
+                        <h3 style="font-family: var(--font-editorial); font-size: 1.8rem; margin: 4px 0 8px;" id="homeroomName"></h3>
+                        <p style="color: var(--color-muted-brown);" id="homeroomQuote"></p>
+                    </div>
+                </div>
+
+                <!-- ZIG ZAG HEADER: CENTER ALIGNED -->
+                <div class="section-header align-center">
+                    <span class="section-tag">Struktur Pengurus</span>
+                    <h2 class="section-title">Bagan Kepengurusan</h2>
+                </div>
+
+                <div class="org-chart-container">
+                    <div class="org-tree">
+                        <!-- WALI KELAS DI BAGAN ORGANISASI -->
+                        <div class="org-level">
+                            <div class="org-card wali">
+                                <div class="tape-effect"></div>
+                                <div class="org-role">Wali Kelas</div>
+                                <div class="org-name" id="orgWaliName">Ibu Nurul Hidayah, S.Kom</div>
+                            </div>
+                        </div>
+                        <div class="org-level">
+                            <div class="org-card leader">
+                                <div class="tape-effect"></div>
+                                <div class="org-role">Ketua Kelas</div>
+                                <div class="org-name">Dimas Alamsyah</div>
+                            </div>
+                            <div class="org-card leader">
+                                <div class="tape-effect"></div>
+                                <div class="org-role">Wakil Ketua</div>
+                                <div class="org-name">Aji firmansyah</div>
+                            </div>
+                        </div>
+                        <div class="org-level">
+                            <div class="org-card">
+                                <div class="org-role">Sekretaris 1</div>
+                                <div class="org-name">Lusi lestari</div>
+                            </div>
+                          <div class="org-level">
+                            <div class="org-card">
+                                <div class="org-role">Sekretaris 2</div>
+                                <div class="org-name">Anisa salsa</div>
+                            </div>
+                            <div class="org-card">
+                                <div class="org-role">Bendahara </div>
+                                <div class="org-name">Sindi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: ANGGOTA KELAS -->
+        <section id="members" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: LEFT ALIGNED -->
+                <div class="section-header align-left">
+                    <span class="section-tag">Direktori Siswa & Wali Kelas</span>
+                    <h2 class="section-title">Anggota XI PPLG</h2>
+                    <p class="section-subtitle">Klik kartu untuk membalik & melihat statistik unik setiap siswa dan Wali Kelas!</p>
+                </div>
+
+                <div class="filter-search-bar">
+                    <input type="text" id="memberSearch" class="search-input" placeholder="Cari nama anggota...">
+                    <div class="filter-tabs" id="memberFilters">
+                        <button class="filter-btn active" onclick="filterMembers('all')">Semua</button>
+                        <button class="filter-btn" onclick="filterMembers('Wali Kelas')">Wali Kelas</button>
+                        <button class="filter-btn" onclick="filterMembers('Pengurus')">Pengurus</button>
+                        <button class="filter-btn" onclick="filterMembers('Siswa')">Siswa</button>
+                    </div>
+                </div>
+
+                <div class="members-grid" id="membersGrid"></div>
+            </div>
+        </section>
+
+        <!-- PAGE 4: FUN ZONE (FITUR 1: QUIZ & GAME, FITUR 2: SPOTIFY PLAYLIST) -->
+        <section id="fun" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: CENTER ALIGNED -->
+                <div class="section-header align-center">
+                    <span class="section-tag">Fitur Interaktif & Entertainment</span>
+                    <h2 class="section-title">Fun Zone XI PPLG</h2>
+                    <p class="section-subtitle">Mainkan game mini, ikuti quiz role PPLG, dan dengarkan playlist favorit kelas!</p>
+                </div>
+
+                <!-- FITUR 1: PPLG PERSONALITY QUIZ -->
+                <div class="quiz-box">
+                    <div class="stamp-badge">QUIZ</div>
+                    <h3 style="font-family: var(--font-editorial); font-size: 1.8rem; margin-bottom: 10px;" id="quizQuestion">Siapakah Kamu di Lab PPLG?</h3>
+                    <div id="quizOptions"></div>
+                    <div id="quizResult" style="display:none;">
+                        <h2 style="font-family: var(--font-editorial); color: var(--color-sage-dark); font-size: 2.2rem;" id="resultRole"></h2>
+                        <p style="margin: 15px 0;" id="resultDesc"></p>
+                        <button class="btn btn-primary" onclick="resetQuiz()">Coba Lagi 🔄</button>
+                    </div>
+                </div>
+
+                <!-- FITUR 1: MEMORY CARD GAME -->
+                <div class="shadow-box" style="text-align: center; margin-bottom: 4rem;">
+                    <div class="tape-effect"></div>
+                    <h3 style="font-family: var(--font-editorial); font-size: 1.8rem;">Memory Match PPLG 🧩</h3>
+                    <p style="color: var(--color-muted-brown);">Cocokkan pasangan ikon coding & kenangan kelas secepat mungkin!</p>
+                    <div class="game-grid" id="gameGrid"></div>
+                    <button class="btn btn-outline" style="color: var(--color-dark-olive); border-color: var(--color-sage-dark);" onclick="initGame()">Reset Game 🎮</button>
+                </div>
+
+                <!-- FITUR 2: SPOTIFY PLAYLIST INTEGRATION -->
+                <div class="spotify-container">
+                    <div class="section-header align-left" style="margin-top: 0; color: var(--color-warm-white);">
+                        <span class="section-tag" style="background: rgba(255,255,255,0.15); color: var(--color-muted-yellow);">Musical Memories</span>
+                        <h2 class="section-title" style="color: var(--color-warm-white);">Playlist Spotify Kelas</h2>
+                        <p class="section-subtitle" style="color: rgba(255,255,255,0.8);">Lagu-lagu yang selalu mengiringi sesi coding dan kebersamaan di kelas.</p>
+                    </div>
+                    <!-- Embedded Spotify Iframe -->
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PAGE 5: GALERI -->
+        <section id="gallery" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: RIGHT ALIGNED -->
+                <div class="section-header align-right">
+                    <span class="section-tag">Dokumentasi</span>
+                    <h2 class="section-title">Galeri Foto</h2>
+                    <p class="section-subtitle">Album kenangan visual perjalanan masa sekolah kami.</p>
+                </div>
+
+                <div class="gallery-filter">
+                    <button class="filter-btn active" onclick="filterGallery('all')">Semua Momen</button>
+                    <button class="filter-btn" onclick="filterGallery('Kegiatan')">Kegiatan</button>
+                    <button class="filter-btn" onclick="filterGallery('Acara')">Acara Khusus</button>
+                    <button class="filter-btn" onclick="filterGallery('Kebersamaan')">Kebersamaan</button>
+                </div>
+
+                <div class="gallery-grid" id="galleryGrid"></div>
+            </div>
+        </section>
+
+        <!-- PAGE 6: KEGIATAN -->
+        <section id="activities" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: CENTER ALIGNED -->
+                <div class="section-header align-center">
+                    <span class="section-tag">Aktivitas & Event</span>
+                    <h2 class="section-title">Jurnal Kegiatan</h2>
+                    <p class="section-subtitle">Catatan momen penting yang telah kami lalui bersama.</p>
+                </div>
+
+                <div class="timeline" id="timelineList"></div>
+            </div>
+        </section>
+
+        <!-- PAGE 7: INFORMASI -->
+        <section id="info" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: LEFT ALIGNED -->
+                <div class="section-header align-left">
+                    <span class="section-tag">Papan Pengumuman</span>
+                    <h2 class="section-title">Informasi & Agenda</h2>
+                </div>
+
+                <div class="notice-grid" id="noticeGrid"></div>
+
+                <div class="guestbook-section">
+                    <div class="section-header align-center">
+                        <span class="section-tag">Digital Wall</span>
+                        <h2 class="section-title">Pesan & Kesan Teman</h2>
+                        <p class="section-subtitle">Tinggalkan pesan manis atau ucapan di kertas tempel ini!</p>
+                    </div>
+
+                    <form class="note-form" id="guestbookForm">
+                        <input type="text" class="note-input" id="noteAuthor" placeholder="Nama Kamu..." required>
+                        <textarea class="note-textarea" id="noteContent" placeholder="Tulis pesan atau kenangan..." required></textarea>
+                        <button type="submit" class="btn btn-primary" style="align-self: flex-end;">Tempel Pesan 📌</button>
+                    </form>
+
+                    <div class="notes-grid" id="notesGrid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 8: CONTACT -->
+        <section id="contact" class="page">
+            <div class="container">
+                <!-- ZIG ZAG HEADER: CENTER ALIGNED -->
+                <div class="section-header align-center">
+                    <span class="section-tag">Tetap Terhubung</span>
+                    <h2 class="section-title">Kontak & Media Sosial</h2>
+                </div>
+
+                <div class="shadow-box contact-box">
+                    <div class="tape-effect"></div>
+                    <div class="stamp-badge">CONNECT</div>
+                    <h3 style="font-family: var(--font-editorial); font-size: 1.8rem; margin-bottom: 12px;">Ruang Digital XI PPLG</h3>
+                    <p style="color: var(--color-muted-brown); margin-bottom: 1.5rem;">
+                        Ingin tahu lebih banyak tentang aktivitas kami atau bekerja sama dalam kegiatan sekolah? Hubungi kami lewat media sosial berikut!
+                    </p>
+                    <div class="social-links" id="socialContainer"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LIGHTBOX MODAL FOR GALLERY -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+            <span class="lightbox-prev" onclick="changeLightbox(-1)">&#10094;</span>
+            <span class="lightbox-next" onclick="changeLightbox(1)">&#10095;</span>
+            <img src="" alt="" class="lightbox-img" id="lightboxImg">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">XI PPLG</div>
+            <p class="footer-text">© 2025/2026 XI PPLG Class Journal. Crafted with memories.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const CLASS_CONFIG = {
+            academicYear: "2025 / 2026",
+            heroTitle: "A Little Place, <br><span>A Lot of Memories.</span>",
+            heroDescription: "Ruang digital kenangan kelas XI PPLG. Tempat kami menyimpan setiap tawa, cerita coding, dan momen tak terpisahkan bersama selama di sekolah.",
+            heroBgPhoto: "fotokelas.jpg",
+            
+            aboutStory: "Berawal dari ruang kelas sederhana dengan jajaran komputer dan meja kayu, kami disatukan dalam kelas XI Pengembangan Perangkat Lunak dan GIM (PPLG). Berbagai latar belakang menyatu menjadi satu keluarga yang saling mendukung dalam suka dan duka sekolah.",
+            aboutPhoto: "pertama.jpg",
+            
+            // WALI KELAS CONFIGURATION
+            homeroom: {
+                name: "Ibu Pitri Nurwasilah",
+                quote: "Tetaplah menjadi pribadi yang rendah hati, kreatif, dan tidak pernah takut mencoba hal baru.",
+                photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"
+            },
+
+            quotesList: [
+                { quote: "Bukan tentang berapa banyak baris kode yang error, tapi tentang siapa yang bertahan memperbaikinya bersama-sama.", author: "— XI PPLG 2025" },
+                { quote: "Keyboard berisik, pikiran pusing, tapi tawa di lab kelas selalu bikin tenang.", author: "— Anak Pojokan Lab" },
+                { quote: "Error 'SyntaxError' menguji kodingan, error 'Salah Paham' menguji pertemanan.", author: "— Sekretaris Kelas" },
+                { quote: "Lupa ; di PHP itu biasa, tapi lupa kenangan XI PPLG itu tak mungkin.", author: "— Anak Front-End" }
+            ],
+            
+            // DATA ANGGOTA KELAS + WALI KELAS
+            members: [
+                { id: 0, name: "Ibu Pitri Nurwasilah", role: "Wali Kelas", category: "Wali Kelas", quote: "Tetaplah menjadi pribadi yang rendah hati & pantang menyerah.", coding: 100, logic: 100, coffee: 80, photo: "" },
+                { id: 1, name: "Dimas alamsyah", role: "Ketua Kelas", category: "Pengurus", quote: "Lead by example, code with heart.", coding: 92, logic: 88, coffee: 95, photo: "dimas.jpg" },
+                { id: 2, name: "Aji Firmansyah", role: "Wakil Ketua", category: "Pengurus", quote: "Selalu ada jalan di balik setiap error.", coding: 90, logic: 94, coffee: 80, photo: "aji.jpg" },
+                { id: 3, name: "Lusi Lestari", role: "Sekretaris 1", category: "Pengurus", quote: "Catatan rapi, pikiran tenang.", coding: 85, logic: 90, coffee: 85, photo: "" },
+                { id: 4, name: "Anisa Salsa", role: "Sekretaris 2", category: "Pengurus", quote: "Catatan rapi, pikiran tenang.", coding: 85, logic: 90, coffee: 85, photo: "" },
+                { id: 5, name: "Sindi", role: "Bendahara ", category: "Pengurus", quote: "Uang kas lancar, kelas aman.", coding: 82, logic: 95, coffee: 75, photo: "" },
+                { id: 6, name: "Aa Anugrah", role: "", category: "Pengurus", quote: "Kelas bersih, coding nyaman.", coding: 88, logic: 82, coffee: 90, photo: "nugrah.jpg" },
+                { id: 7, name: "Lutpi Abdul Aziz", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "adul.jpg" },
+                { id: 8, name: "Angga Nugraha", role: "Anggota", category: "Pengurus", quote: "Catatan rapi, pikiran tenang.", coding: 85, logic: 90, coffee: 85, photo: "angga.jpg" },
+                { id: 9, name: "Anton", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "anton.jpg" },
+                { id: 10, name: "Rendi", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "rendi.jpg" },
+                { id: 11, name: "Rijal", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "rijal.jpg" },
+                { id: 12, name: "Fajar Nurjaman", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "fajar.jpg" },
+                { id: 13, name: "Denias Muhammad romdon", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+                { id: 14, name: "M Abdul Sidiq Ripai", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+                { id: 15, name: "Firda Ahmad P", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+                { id: 16, name: "Randi Perdiansyah", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+                { id: 17, name: "Siti Nurajijah", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+                { id: 18, name: "Suci", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+                { id: 19, name: "Rizki Pratama", role: "Anggota", category: "Siswa", quote: "Desain cantik, aplikasi menarik.", coding: 94, logic: 86, coffee: 88, photo: "" },
+            ],
+            gallery: [
+                { id: 1, title: "Lomba 17 Agustus", category: "Acara", date: "22 Agustus 2026", src: "agustus.jpg" },
+                { id: 2, title: "Lomba Classmeeting", category: "Acara", date: "20 Desember 2025", src: "piala.jpg" },
+                { id: 3, title: "Presentasi Project Web", category: "Kegiatan", date: "05 Des 2025", src: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80" }
+            ],
+
+            activities: [
+                { date: "15 FEB 2026", title: "Kunjungan Industri Studio Game", desc: "Mengenal ekosistem kerja software engineer & game developer secara langsung." },
+                { date: "10 JAN 2026", title: "Pameran Karya Project PPLG", desc: "Menampilkan hasil web dan game karya siswa di hadapan guru dan kawan sekolah." }
+            ],
+
+            notices: [
+                { badge: "Tugas", title: "Pengumpulan Project Web Front-End", desc: "Batas akhir pengumpulan file HTML & CSS mandiri pada hari Jumat jam 23.59 WIB.", timer: "Sisa Waktu: 3 Hari Lagi", urgent: true },
+                { badge: "Agenda", title: "Jadwal Piket Kebersihan Lab", desc: "Dimohon kelompok 3 untuk standby membersihkan meja lab setelah jam pelajaran.", timer: null, urgent: false }
+            ],
+
+            initialNotes: [
+                { author: "Anton", text: "Semoga XI PPLG makin solid dan lulus bareng dengan nilai terbaik! 🚀" },
+                { author: "Siti Sarah", text: "Jangan lupa piket lab ya guys, kasihan kelompok piketnya! 🧹" }
+            ],
+
+            socials: [
+                { name: "Instagram", link: "https://instagram.com" },
+                { name: "Email Kelas", link: "mailto:xipplg@school.sch.id" }
+            ]
+        };
+
+        // NAVIGATION LOGIC
+        function switchPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            pages.forEach(p => p.classList.remove('active'));
+            navLinks.forEach(l => l.classList.remove('active'));
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            navLinks.forEach(l => {
+                if (l.getAttribute('onclick') && l.getAttribute('onclick').includes(pageId)) {
+                    l.classList.add('active');
+                }
+            });
+
+            document.getElementById('navLinks').classList.remove('mobile-open');
+        }
+
+        // INITIALIZE CONTENT
+        function initApp() {
+            document.getElementById('heroSection').style.backgroundImage = `url('${CLASS_CONFIG.heroBgPhoto}')`;
+            document.getElementById('heroTitle').innerHTML = CLASS_CONFIG.heroTitle;
+            document.getElementById('heroDesc').innerText = CLASS_CONFIG.heroDescription;
+            document.getElementById('heroYearBadge').innerText = `Tahun Ajaran ${CLASS_CONFIG.academicYear}`;
+            document.getElementById('statMembers').innerText = CLASS_CONFIG.members.length - 1;
+
+            document.getElementById('aboutStory').innerText = CLASS_CONFIG.aboutStory;
+            document.getElementById('aboutPhoto').src = CLASS_CONFIG.aboutPhoto;
+            document.getElementById('homeroomName').innerText = CLASS_CONFIG.homeroom.name;
+            document.getElementById('homeroomQuote').innerText = `"${CLASS_CONFIG.homeroom.quote}"`;
+            document.getElementById('homeroomImg').src = CLASS_CONFIG.homeroom.photo;
+            document.getElementById('orgWaliName').innerText = CLASS_CONFIG.homeroom.name;
+
+            renderHomeMemories();
+            renderMembers(CLASS_CONFIG.members);
+            renderGallery(CLASS_CONFIG.gallery);
+            renderActivities(CLASS_CONFIG.activities);
+            renderNotices(CLASS_CONFIG.notices);
+            renderSocials(CLASS_CONFIG.socials);
+            initGuestbook();
+            initQuiz();
+            initGame();
+        }
+
+        function renderHomeMemories() {
+            const grid = document.getElementById('homeMemoriesGrid');
+            grid.innerHTML = CLASS_CONFIG.gallery.slice(0, 3).map(item => `
+                <div class="polaroid-card">
+                    <div class="tape-effect"></div>
+                    <div class="polaroid-img-wrapper"><img src="${item.src}" alt="${item.title}"></div>
+                    <div class="polaroid-caption">${item.title}</div>
+                    <div class="polaroid-date">${item.date}</div>
+                    <div class="handwritten-note">Kenangan Manis ✨</div>
+                </div>
+            `).join('');
+        }
+
+        // RANDOM QUOTE GENERATOR
+        function generateRandomQuote() {
+            const qEl = document.getElementById('classQuote');
+            const aEl = document.getElementById('quoteAuthor');
+            qEl.style.opacity = 0;
+            setTimeout(() => {
+                const rand = CLASS_CONFIG.quotesList[Math.floor(Math.random() * CLASS_CONFIG.quotesList.length)];
+                qEl.innerText = `"${rand.quote}"`;
+                aEl.innerText = rand.author;
+                qEl.style.opacity = 1;
+            }, 300);
+        }
+
+        // 3D FLIP CARD RENDER FOR MEMBERS (TERMASUK WALI KELAS)
+        function renderMembers(data) {
+            const grid = document.getElementById('membersGrid');
+            grid.innerHTML = data.map(m => `
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="tape-effect"></div>
+                            <img src="${m.photo}" alt="${m.name}" class="member-avatar ${m.category === 'Wali Kelas' ? 'wali-avatar' : ''}">
+                            <div>
+                                <div class="member-name">${m.name}</div>
+                                <div class="member-role">${m.role}</div>
+                            </div>
+                            <p style="font-size: 0.85rem; font-style: italic; color: var(--color-muted-brown);">"${m.quote}"</p>
+                            <span class="btn-detail" style="font-size:0.75rem; color:var(--color-sage-dark);">Klik Untuk Stat 🔄</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="pin-effect"></div>
+                            <h4 style="font-family: var(--font-editorial); font-size: 1.2rem;">${m.name}</h4>
+                            <span class="member-role">${m.role}</span>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar-label"><span>Coding Skill</span><span>${m.coding}%</span></div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${m.coding}%;"></div></div>
+                            </div>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar-label"><span>Logic & Bugfix</span><span>${m.logic}%</span></div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${m.logic}%;"></div></div>
+                            </div>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar-label"><span>Coffee Level</span><span>${m.coffee}%</span></div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${m.coffee}%;"></div></div>
+                            </div>
+                            <span class="btn-detail" style="font-size:0.75rem; color:var(--color-sage-dark);">Balik Kartu 🔄</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMembers(cat) {
+            document.querySelectorAll('#memberFilters .filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            if (cat === 'all') renderMembers(CLASS_CONFIG.members);
+            else renderMembers(CLASS_CONFIG.members.filter(m => m.category === cat));
+        }
+
+        // FITUR 1: QUIZ LOGIC
+        const quizData = [
+            {
+                q: "Apa yang kamu lakukan saat kodinganmu mengalami error SyntaxError?",
+                a: [
+                    { text: "Langsung cek baris kode & teliti titik koma (;)", role: "Si Master Bugfix 🛠️", desc: "Kamu sangat teliti dan tenang saat menyelesaikan masalah!" },
+                    { text: "Buka Figma lalu ngerjain tampilan visual dulu", role: "Si Designer UI/UX 🎨", desc: "Keindahan visual dan kenyamanan tampilan adalah prioritas utamamu!" },
+                    { text: "Seduh kopi hitam dulu sambil ngobrol sama teman", role: "Si Kang Kopi Lab ☕", desc: "Penyeimbang suasana kelas yang selalu membawa ketenangan!" }
+                ]
+            }
+        ];
+
+        function initQuiz() {
+            const q = quizData[0];
+            document.getElementById('quizQuestion').innerText = q.q;
+            const opts = document.getElementById('quizOptions');
+            opts.innerHTML = q.a.map((opt, i) => `
+                <button class="quiz-option-btn" onclick="selectQuiz(${i})">${opt.text}</button>
+            `).join('');
+        }
+
+        function selectQuiz(idx) {
+            const res = quizData[0].a[idx];
+            document.getElementById('quizOptions').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'block';
+            document.getElementById('resultRole').innerText = res.role;
+            document.getElementById('resultDesc').innerText = res.desc;
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizOptions').style.display = 'block';
+            document.getElementById('quizResult').style.display = 'none';
+        }
+
+        // FITUR 1: MEMORY GAME LOGIC
+        const icons = ['💻', '💻', '☕', '☕', '🚀', '🚀', '🎨', '🎨', '🔥', '🔥', '📚', '📚'];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function initGame() {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            const shuffled = [...icons].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((icon, index) => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.dataset.icon = icon;
+                card.dataset.index = index;
+                card.onclick = () => flipGameCard(card);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipGameCard(card) {
+            if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                card.innerText = card.dataset.icon;
+                flippedCards.push(card);
+
+                if (flippedCards.length === 2) {
+                    setTimeout(checkMatch, 600);
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [c1, c2] = flippedCards;
+            if (c1.dataset.icon === c2.dataset.icon) {
+                matchedPairs++;
+                if (matchedPairs === icons.length / 2) {
+                    alert('Selamat! Kamu berhasil menyelesaikan Memory Game PPLG 🎉');
+                }
+            } else {
+                c1.classList.remove('flipped');
+                c1.innerText = '';
+                c2.classList.remove('flipped');
+                c2.innerText = '';
+            }
+            flippedCards = [];
+        }
+
+        // LIGHTBOX & OTHER LOGIC
+        let currentGalleryList = CLASS_CONFIG.gallery;
+        let currentImageIndex = 0;
+
+        function renderGallery(items) {
+            currentGalleryList = items;
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = items.map((g, idx) => `
+                <div class="gallery-item" onclick="openLightbox(${idx})">
+                    <img src="${g.src}" alt="${g.title}">
+                    <div class="gallery-item-caption">${g.title}</div>
+                    <div class="gallery-item-tag">${g.category} • ${g.date}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterGallery(cat) {
+            document.querySelectorAll('.gallery-filter .filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            if (cat === 'all') renderGallery(CLASS_CONFIG.gallery);
+            else renderGallery(CLASS_CONFIG.gallery.filter(g => g.category === cat));
+        }
+
+        function openLightbox(idx) {
+            currentImageIndex = idx;
+            const item = currentGalleryList[idx];
+            document.getElementById('lightboxImg').src = item.src;
+            document.getElementById('lightboxCaption').innerText = `${item.title} (${item.date})`;
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        function changeLightbox(dir) {
+            currentImageIndex = (currentImageIndex + dir + currentGalleryList.length) % currentGalleryList.length;
+            openLightbox(currentImageIndex);
+        }
+
+        function renderActivities(list) {
+            const timeline = document.getElementById('timelineList');
+            timeline.innerHTML = list.map(a => `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card">
+                        <div class="tape-effect"></div>
+                        <div class="timeline-date">${a.date}</div>
+                        <h3 class="timeline-title">${a.title}</h3>
+                        <p style="color: var(--color-muted-brown); font-size: 0.95rem;">${a.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderNotices(notices) {
+            const grid = document.getElementById('noticeGrid');
+            grid.innerHTML = notices.map(n => `
+                <div class="notice-card ${n.urgent ? 'urgent' : ''}">
+                    <span class="notice-badge">${n.badge}</span>
+                    <h3 class="notice-title">${n.title}</h3>
+                    <p style="color: var(--color-muted-brown); font-size: 0.95rem;">${n.desc}</p>
+                    ${n.timer ? `<div class="notice-timer">⏳ ${n.timer}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function initGuestbook() {
+            const savedNotes = JSON.parse(localStorage.getItem('xi_pplg_notes')) || CLASS_CONFIG.initialNotes;
+            renderNotes(savedNotes);
+
+            document.getElementById('guestbookForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const author = document.getElementById('noteAuthor').value;
+                const text = document.getElementById('noteContent').value;
+                if (author && text) {
+                    savedNotes.unshift({ author, text });
+                    localStorage.setItem('xi_pplg_notes', JSON.stringify(savedNotes));
+                    renderNotes(savedNotes);
+                    document.getElementById('noteAuthor').value = '';
+                    document.getElementById('noteContent').value = '';
+                }
+            });
+        }
+
+        function renderNotes(notes) {
+            const grid = document.getElementById('notesGrid');
+            grid.innerHTML = notes.map(n => `
+                <div class="sticky-note">
+                    <div class="sticky-note-author">${n.author}</div>
+                    <div class="sticky-note-text">"${n.text}"</div>
+                </div>
+            `).join('');
+        }
+
+        let isPlaying = false;
+        function toggleAudio() {
+            const audio = document.getElementById('bgAudio');
+            const btn = document.getElementById('musicToggleBtn');
+            if (isPlaying) { audio.pause(); btn.innerText = '▶'; }
+            else { audio.play(); btn.innerText = '⏸'; }
+            isPlaying = !isPlaying;
+        }
+
+        function renderSocials(socials) {
+            const container = document.getElementById('socialContainer');
+            container.innerHTML = socials.map(s => `
+                <a href="${s.link}" target="_blank" class="social-btn"><span>${s.name}</span></a>
+            `).join('');
+        }
+
+        document.getElementById('memberSearch').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = CLASS_CONFIG.members.filter(m => 
+                m.name.toLowerCase().includes(query) || m.role.toLowerCase().includes(query)
+            );
+            renderMembers(filtered);
+        });
+
+        document.getElementById('hamburgerBtn').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('mobile-open');
+        });
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
